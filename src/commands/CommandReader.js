@@ -21,13 +21,35 @@ const errorHandlers = {
 
 class CommandReader {
 
-    constructor(commandsNamed, argv) {
-        this.argv = argv.slice(2);
+    constructor(commandsNamed, argv, rcKeys) {
+
         this.commandsNamed = commandsNamed;
+        this.argv = argv.slice(2);
+        this.rcKeys = rcKeys;
+
         this.loaded = false;
         this.correct = true;
         this.command = null;
         this.options = null;
+    }
+
+    extendOptionsSpecWithRc(optionsSpec) {
+
+        const optionsSpecExtended = [...optionsSpec];
+        const optionNames = optionsSpec.reduce((acc, spec) => {
+            acc.push(spec.name);
+            return acc;
+        }, []);
+
+        for (const rcKey of this.rcKeys) {
+            if (optionNames.indexOf(rcKey) === -1) {
+                optionsSpecExtended.push({
+                    name: rcKey, type: String,
+                });
+            }
+        }
+
+        return optionsSpecExtended;
     }
 
     load() {
@@ -36,8 +58,10 @@ class CommandReader {
             const { command, argv: remainingArgv } = commandLineCommands(validCommands, this.argv);
             this.command = command;
             const optionsSpec = this.commandsNamed[command].getOptions();
-            this.options = commandLineArgs(optionsSpec, { argv: remainingArgv });
-            requiredOptions(optionsSpec, this.options);
+            const optionsSpecExtended = this.extendOptionsSpecWithRc(optionsSpec);
+
+            this.options = commandLineArgs(optionsSpecExtended, { argv: remainingArgv });
+            requiredOptions(optionsSpecExtended, this.options);
 
         } catch (error) {
             this.correct = false;

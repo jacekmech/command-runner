@@ -57,7 +57,17 @@ test('executeCommand successful', () => {
     expect(command1.executed).toBeTruthy();
 });
 
-test('executeCommand failed', () => {
+test('executeCommand with required option failed', () => {
     executeCommand(commands, ['node', 'executable', 'command2']);
     expect(command2.executed).toBeFalsy();
+});
+
+test('executeCommand with required option successful', () => {
+    executeCommand(commands, ['node', 'executable', 'command2', '--option1', 'value1']);
+    expect(command2.executed).toBeTruthy();
+});
+
+test('executeCommand with required option loaded as RC successful', () => {
+    executeCommand(commands, ['node', 'executable', 'command2'], { option1: 'value' });
+    expect(command2.executed).toBeTruthy();
 });

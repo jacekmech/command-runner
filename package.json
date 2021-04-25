@@ -25,6 +25,7 @@
     "dependencies": {
         "command-line-args": "^5.1.1",
         "command-line-commands": "^3.0.2",
+        "dotenv": "^8.2.0",
         "winston": "^3.3.3"
     },
     "devDependencies": {
