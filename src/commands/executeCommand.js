@@ -27,9 +27,10 @@ const executeCommand = async (commands, argv, rcDict) => {
         const command = commandReader.getCommand();
         const commandObj = commandsNamed[command];
         await commandObj.execute(commandReader.getOptions());
+        return commandObj;
+    } else {
+        return null;
     }
-
-    return commandCorrect;
 };
 
 module.exports = executeCommand;
